@@ -66,12 +66,15 @@ The native **iOS N-Genius SDK** does not provide specific statuses like **author
 | Transaction successful | `PAYMENT_SUCCESSFUL` | `200` |
 
 ---
+
 ### 🚀 **Get Started with N-Genius Flutter SDK**
 1. Install the plugin in your Flutter project.
 2. Configure **Android settings** as mentioned above.
 3. Call the **N-Genius SDK** to launch the payment flow.
 
-#### **Example Implementation**
+---
+
+#### **Example Implementation (Normal Payment)**
 ```dart
 class NgeniusExample extends StatelessWidget {
   const NgeniusExample({super.key});
@@ -103,6 +106,85 @@ class NgeniusExample extends StatelessWidget {
   }
 }
 ```
+---
+
+#### **Example Implementation (for using Saved Cards)**
+
+> **Note:** The key difference when using a saved card is in the **order creation step**. You must pass a `savedCard` object (`NGeniusSavedCardModel`) in your `createOrder` request body. If `recaptureCsc` is set to `true`, the user will be prompted to enter their CVV — you can skip this by passing the `cvv` directly to `launchSavedCardPayment`.
+
+```dart
+class NgeniusSavedCardExample extends StatelessWidget {
+  const NgeniusSavedCardExample({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('N-Genius Saved Card Example'),
+      ),
+      body: Center(
+        child: ElevatedButton(
+            onPressed: () async {
+              // 1. Build your saved card model from your stored card data
+              final savedCard = NGeniusSavedCardModel(
+                maskedPan: "400555******0001",
+                expiry: "2025-12",
+                cardholderName: "John Doe",
+                scheme: "VISA",
+                cardToken: "your-card-token",
+                recaptureCsc: true, // true = user will be prompted for CVV
+              );
+
+              // 2. Call YOUR backend/API to create the order.
+              // This is not part of the plugin — you are responsible for
+              // implementing this API call following the N-Genius documentation:
+              // https://docs.ngenius-payments.com/reference/two-stage-payments-orders
+              // The savedCard object must be included in the request body.
+              final Map<String, dynamic> orderJsonObject = await yourApiService.createOrder(
+                amountValue: 10.50,
+                currency: "AED",
+                savedCard: savedCard,
+              );
+
+              // 3. Launch saved card payment
+              // Pass cvv to skip the CVV page, or omit it to let the user enter it
+              final ngeniusFlutterSdk = NgeniusFlutterSdk();
+              NGeniusResponseModel ngeniusResponse = await ngeniusFlutterSdk.launchSavedCardPayment(
+                orderJsonObject: orderJsonObject, 
+                //cvv: "123" //If you want your UI to handle CVV
+              );
+
+              if (context.mounted) {
+                if (ngeniusResponse.message == "PAYMENT_SUCCESSFUL") {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Transaction Successful")));
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text(
+                          "Transaction Failed :: code :: ${ngeniusResponse.code} :: message :: ${ngeniusResponse.message}")));
+                }
+              }
+            },
+            child: Text("Launch Saved Card Payment")),
+      ),
+    );
+  }
+}
+```
+
+---
+
+## 🔄 N-Genius SavedCard Model
+
+| Parameter      | Example                                | DataType   |
+|----------------|----------------------------------------|------------|
+| maskedPan      | `400555******0001`                     | `String`   |
+| expiry         | `"2025-12"`                            | `String`   |
+| cardholderName | `"John Doe"`                           | `String`   |
+| scheme         | `"VISA"`                               | `String`   |
+| cardToken      | `"your-card-token"`                    | `String`   |
+| recaptureCsc   | `true` = user will be prompted for CVV | `boolean`  |
+
+---
 
 ### **Passing the Order JSON Object to `launchCardPayment` Method**
 
@@ -110,11 +192,11 @@ To pass the `orderJsonObject` to the `launchCardPayment` method, you need to pro
 
 #### **Steps to Get the Order JSON Object**
 
-1. **Get the Access Token**  
+1- **Get the Access Token**  
    First, you need to obtain the access token by following the official N-Genius documentation:  
    [Request an Access Token](https://docs.ngenius-payments.com/reference/request-an-access-token-direct)
 
-2. **Get the Order Object**  
+2- **Get the Order Object**  
    Once you have the access token, use it to call the API to get the order object. For more information, refer to the N-Genius documentation:  
    [Two-Stage Payments Orders](https://docs.ngenius-payments.com/reference/two-stage-payments-orders)
 
@@ -123,7 +205,23 @@ To pass the `orderJsonObject` to the `launchCardPayment` method, you need to pro
 After calling the APIs, you will receive the N-Genius order object. You can check the structure of the order object by referring to the official sample here:  
 [Order Object in Full](https://docs.ngenius-payments.com/reference/the-order-object-in-full)
 
-#### **Test Payment Using N-Genius Test Cards**
+---
+
+### **Getting the Saved-Card Token**
+
+1- Ensure that Tokenization is enabled for your merchant account.
+
+2- After a successful payment, retrieve the order details using the following endpoint:
+`GET /transactions/outlets/{{outletId}}/orders/{{orderId}}`
+
+3- The saved card token is returned in the response at:
+`_embedded.payment.savedCard.cardToken`
+
+You can use this token to perform future saved card payments without requiring the customer to re-enter their card details.
+
+---
+
+### **Test Payment Using N-Genius Test Cards**
 
 You can test payment using test cards for N-Genius from the following link:  
 [Sandbox Test Environment](https://docs.ngenius-payments.com/reference/sandbox-test-environment)

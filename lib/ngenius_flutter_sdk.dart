@@ -8,4 +8,12 @@ class NgeniusFlutterSdk {
     return NgeniusFlutterSdkPlatform.instance
         .launchCardPayment(orderJsonObject: orderJsonObject);
   }
+
+  Future<NGeniusResponseModel> launchSavedCardPayment({
+    required Map<String, dynamic> orderJsonObject,
+    String? cvv,
+  }) {
+    return NgeniusFlutterSdkPlatform.instance
+        .launchSavedCardPayment(orderJsonObject: orderJsonObject, cvv: cvv);
+  }
 }

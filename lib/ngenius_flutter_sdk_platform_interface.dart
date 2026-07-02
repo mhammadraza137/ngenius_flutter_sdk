@@ -26,4 +26,11 @@ abstract class NgeniusFlutterSdkPlatform extends PlatformInterface {
   Future<NGeniusResponseModel> launchCardPayment({required Map<String, dynamic> orderJsonObject}) async {
     throw UnimplementedError("launchCardPayment() has not been implemented.");
   }
+
+  Future<NGeniusResponseModel> launchSavedCardPayment({
+    required Map<String, dynamic> orderJsonObject,
+    String? cvv,
+  }) async {
+    throw UnimplementedError("launchSavedCardPayment() has not been implemented.");
+  }
 }

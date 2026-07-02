@@ -52,6 +52,7 @@ android {
         testImplementation("org.mockito:mockito-core:5.0.0")
         implementation "com.github.network-international.payment-sdk-android:payment-sdk-core:3.1.7"
         implementation "com.github.network-international.payment-sdk-android:payment-sdk:3.1.7"
+        implementation "com.google.code.gson:gson:2.10.1"
     }
 
     testOptions {

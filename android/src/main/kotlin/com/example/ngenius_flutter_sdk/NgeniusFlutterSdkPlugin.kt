@@ -14,8 +14,12 @@ import io.flutter.plugin.common.PluginRegistry.ActivityResultListener
 import payment.sdk.android.PaymentClient
 import payment.sdk.android.cardpayment.CardPaymentData
 import payment.sdk.android.cardpayment.CardPaymentRequest
+import payment.sdk.android.core.Order
 import io.flutter.plugin.common.PluginRegistry
 import org.json.JSONObject
+import java.util.HashMap
+import com.google.gson.Gson
+
 
 /** NgeniusFlutterSdkPlugin */
 class NgeniusFlutterSdkPlugin: FlutterPlugin, MethodCallHandler, ActivityAware, PluginRegistry.ActivityResultListener {
@@ -35,52 +39,90 @@ class NgeniusFlutterSdkPlugin: FlutterPlugin, MethodCallHandler, ActivityAware, 
   }
 
   override fun onMethodCall(call: MethodCall, result: Result) {
-    if (call.method == "launchCardPayment") {
-      try {
-        val jsonData = call.argument<HashMap<String, Any>>("orderJsonObject")
-          ?: throw IllegalArgumentException("orderJsonObject is required")
+    when (call.method) {
 
-        val links = (jsonData["_links"] as? HashMap<String, Any>)
-          ?: throw Exception("_links not found in orderJsonObject")
+      // ===========================
+      // Standard Payment
+      // ===========================
+      "launchCardPayment" -> {
+        try {
+          val jsonData = call.argument<HashMap<String, Any>>("orderJsonObject")
+            ?: throw IllegalArgumentException("orderJsonObject is required")
 
-        val authUrl = ((links["payment-authorization"] as? HashMap<String, Any>)?.get("href") as? String)
-          ?: throw Exception("Authorization URL not found in orderJsonObject")
+          val links = jsonData["_links"] as? HashMap<String, Any>
+            ?: throw Exception("_links not found in orderJsonObject")
 
-        val paymentUrl = ((links["payment"] as? HashMap<String, Any>)?.get("href") as? String)
-          ?: throw Exception("Payment URL not found in orderJsonObject")
+          val authUrl = ((links["payment-authorization"] as? HashMap<String, Any>)?.get("href") as? String)
+            ?: throw Exception("Authorization URL not found in orderJsonObject")
 
+          val paymentUrl = ((links["payment"] as? HashMap<String, Any>)?.get("href") as? String)
+            ?: throw Exception("Payment URL not found in orderJsonObject")
 
-        val code = if (paymentUrl.contains("code=")) {
-          paymentUrl.substringAfter("code=").takeIf { it.isNotEmpty() }
-            ?: throw Exception("Code value is empty in orderJsonObject")
-        } else {
-          throw Exception("Code parameter not found in payment URL")
+          val code = if (paymentUrl.contains("code=")) {
+            paymentUrl.substringAfter("code=").takeIf { it.isNotEmpty() }
+              ?: throw Exception("Code value is empty in orderJsonObject")
+          } else {
+            throw Exception("Code parameter not found in payment URL")
+          }
+
+          pendingResult = result
+          activity?.let { currentActivity ->
+            paymentClient = PaymentClient(currentActivity, "DEMO_VAL")
+            paymentClient.launchCardPayment(
+              CardPaymentRequest.Builder()
+                .gatewayUrl(authUrl)
+                .code(code)
+                .build(),
+              CARD_PAYMENT_REQUEST_CODE
+            )
+          } ?: result.error("NO_ACTIVITY", "No activity available", null)
+        } catch (e: Exception) {
+          result.error("LAUNCH_ERROR", e.message ?: "Unknown error occurred", null)
         }
-
-        pendingResult = result
-        activity?.let { currentActivity ->
-          paymentClient = PaymentClient(currentActivity, "DEMO_VAL")
-          paymentClient.launchCardPayment(
-            CardPaymentRequest.Builder()
-              .gatewayUrl(authUrl)
-              .code(code)
-              .build(),
-            CARD_PAYMENT_REQUEST_CODE
-          )
-        } ?: result.error(
-          "NO_ACTIVITY",
-          "No activity available",
-          null
-        )
-      } catch (e: Exception) {
-        result.error(
-          "LAUNCH_ERROR",
-          e.message ?: "Unknown error occurred",
-          null
-        )
       }
-    } else {
-      result.notImplemented()
+
+      // ===========================
+      // Saved Card Payment
+      // ===========================
+      "launchSavedCardPayment" -> {
+        try {
+          val jsonData = call.argument<HashMap<String, Any>>("orderJsonObject")
+            ?: throw IllegalArgumentException("orderJsonObject is required")
+
+
+          // Convert to JSON string, then to Order object
+          val orderJson = JSONObject(jsonData as Map<*, *>).toString()
+          val order = Gson().fromJson(orderJson, Order::class.java)
+
+          val cvv = call.argument<String>("cvv") // May be null or empty
+
+          pendingResult = result
+          activity?.let { currentActivity ->
+            paymentClient = PaymentClient(currentActivity, "YOUR_SERVICE_ID")
+
+            if (!cvv.isNullOrEmpty()) {
+              // Option 2: Launch with custom CVV, skipping the pay page
+              paymentClient.launchSavedCardPayment(
+                order = order,
+                cvv = cvv,
+                code = CARD_PAYMENT_REQUEST_CODE
+              )
+            } else {
+              // Option 1: Launch without CVV. This will redirect to the pay page if 'recaptureCsc' was true in the order.
+              paymentClient.launchSavedCardPayment(
+                order = order,
+                code = CARD_PAYMENT_REQUEST_CODE
+              )
+            }
+          } ?: result.error("NO_ACTIVITY", "No activity available", null)
+
+        } catch (e: Exception) {
+          result.error("SAVED_CARD_ERROR", e.message ?: "Unknown error occurred", null)
+        }
+      }
+
+
+      else -> result.notImplemented()
     }
   }
 
