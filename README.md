@@ -19,9 +19,16 @@ N-Genius Flutter SDK provides an easy-to-use integration for handling payments u
 ## ⚙️ Android Configuration
 ### **Tested Environment**
 This plugin has been tested with:
-- **Android Gradle Plugin (AGP):** `8.1.0` [See here](https://github.com/mhammadraza137/ngenius_flutter_sdk/blob/d61f58d72b17127b11308ed4e3c29563b5184fd7/example/android/settings.gradle#L21)
-- **Kotlin Version:** `1.8.22` [See here](https://github.com/mhammadraza137/ngenius_flutter_sdk/blob/d61f58d72b17127b11308ed4e3c29563b5184fd7/example/android/settings.gradle#L22)
-- **Gradle Distribution:** `8.3` [See here](https://github.com/mhammadraza137/ngenius_flutter_sdk/blob/d61f58d72b17127b11308ed4e3c29563b5184fd7/example/android/gradle/wrapper/gradle-wrapper.properties#L5)
+- **Flutter:** `3.44.8` stable (Dart `3.12.2`)
+- **Android Gradle Plugin (AGP):** `9.0.1` [settings.gradle](https://github.com/mhammadraza137/ngenius_flutter_sdk/blob/0c110b9774ef32fef22490f76f5798bf63fc6861/example/android/settings.gradle#L21)
+- **Kotlin Version:** `2.3.20` [settings.gradle](https://github.com/mhammadraza137/ngenius_flutter_sdk/blob/0c110b9774ef32fef22490f76f5798bf63fc6861/example/android/settings.gradle#L22)
+- **Gradle Distribution:** `9.1.0` [gradle-wrapper.properties](https://github.com/mhammadraza137/ngenius_flutter_sdk/blob/0c110b9774ef32fef22490f76f5798bf63fc6861/example/android/gradle/wrapper/gradle-wrapper.properties#L5)
+- **N-Genius Android SDK:** `4.0.5` [android/build.gradle](https://github.com/mhammadraza137/ngenius_flutter_sdk/blob/0c110b9774ef32fef22490f76f5798bf63fc6861/android/build.gradle#L53-L54)
+
+The example no longer applies the `kotlin-android` plugin directly. Its
+`gradle.properties` currently retains Flutter's AGP 9 compatibility flags, so
+this branch should not yet be described as a complete built-in Kotlin
+migration.
 
 ### **Project-Level `build.gradle` Changes**
 Since N-Genius SDK is a **JitPack dependency**, add the following line inside the `allprojects` repositories block in your **project-level** `android/build.gradle` file:
@@ -35,6 +42,9 @@ allprojects {
     }
 }
 ```
+
+The example app already includes this repository and the
+`android.permission.INTERNET` permission.
 
 ## 🍏 iOS Configuration
 No additional configuration is required for iOS.
@@ -70,7 +80,32 @@ The native **iOS N-Genius SDK** does not provide specific statuses like **author
 ### 🚀 **Get Started with N-Genius Flutter SDK**
 1. Install the plugin in your Flutter project.
 2. Configure **Android settings** as mentioned above.
-3. Call the **N-Genius SDK** to launch the payment flow.
+3. Create an order using the N-Genius APIs on your backend.
+4. Pass the complete order response to the plugin to launch the payment flow.
+
+### **Run the Example App**
+
+The example app can create sandbox orders directly for easier SDK testing.
+Open its **Config** tab and enter the API key value without the `Basic` prefix,
+the outlet reference, and optionally a different base URL. You can also launch
+it with:
+
+```sh
+cd example
+flutter pub get
+flutter run \
+  --dart-define=NGENIUS_API_KEY=your_api_key \
+  --dart-define=NGENIUS_OUTLET_REF=your_outlet_reference
+```
+
+The default base URL is
+`https://api-gateway.sandbox.ngenius-payments.com`. Override it with
+`--dart-define=NGENIUS_BASE_URL=...` when required.
+
+> **Security:** Direct access-token and order requests are included only to
+> make the example easy to test. Never ship an N-Genius API key in a production
+> mobile app. Create tokens and orders on a trusted backend and return the order
+> object to the app.
 
 ---
 
@@ -239,5 +274,3 @@ This project is licensed under the [MIT License](https://github.com/mhammadraza1
 📌 **Note:** If you encounter any issues, ensure all dependencies and configurations match the tested environment.
 
 Happy coding! 🎉
-
-
