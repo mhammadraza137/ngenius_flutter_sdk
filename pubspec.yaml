@@ -1,7 +1,11 @@
 name: ngenius_flutter_sdk
 description: "N-Genius Flutter SDK provides an easy-to-use integration for handling payments using N-Genius APIs in Flutter applications."
-version: 1.0.3
+version: 1.0.4
 homepage: https://github.com/mhammadraza137/ngenius_flutter_sdk
+
+platforms:
+  android:
+  ios:
 
 environment:
   sdk: ^3.6.1

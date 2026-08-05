@@ -1,3 +1,6 @@
+## 1.0.4
+- Explicitly declared Android and iOS platform support for pub.dev metadata.
+
 ## 1.0.3
 - Added saved-card payment support.
 - Updated Android example configuration for newer Flutter/Gradle/Kotlin setup.
