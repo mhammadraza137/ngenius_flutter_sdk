@@ -1,7 +1,13 @@
+## 1.0.3
+- Added saved-card payment support.
+- Updated Android example configuration for newer Flutter/Gradle/Kotlin setup.
+- Updated N-Genius Android SDK integration notes for SDK `4.0.5`.
+- Improved example app with sandbox order creation flow.
+- Improved README setup, testing, and contributor documentation.
+
+## 1.0.2
+- Improved documentation.
 
 ## 1.0.1
 - Format dart code.
-- Improved documentation.
-
-## 1.0.2
 - Improved documentation.
