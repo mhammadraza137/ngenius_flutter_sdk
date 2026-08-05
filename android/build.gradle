@@ -2,14 +2,14 @@ group = "com.example.ngenius_flutter_sdk"
 version = "1.0-SNAPSHOT"
 
 buildscript {
-    ext.kotlin_version = "1.8.22"
+    ext.kotlin_version = "2.3.20"
     repositories {
         google()
         mavenCentral()
     }
 
     dependencies {
-        classpath("com.android.tools.build:gradle:8.1.0")
+        classpath("com.android.tools.build:gradle:9.0.1")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version")
     }
 }
@@ -22,7 +22,7 @@ allprojects {
 }
 
 apply plugin: "com.android.library"
-apply plugin: "kotlin-android"
+//apply plugin: "kotlin-android"
 
 android {
     namespace = "com.example.ngenius_flutter_sdk"
@@ -50,8 +50,8 @@ android {
     dependencies {
         testImplementation("org.jetbrains.kotlin:kotlin-test")
         testImplementation("org.mockito:mockito-core:5.0.0")
-        implementation "com.github.network-international.payment-sdk-android:payment-sdk-core:3.1.7"
-        implementation "com.github.network-international.payment-sdk-android:payment-sdk:3.1.7"
+        implementation "com.github.network-international.payment-sdk-android:payment-sdk-core:4.0.5"
+        implementation "com.github.network-international.payment-sdk-android:payment-sdk:4.0.5"
         implementation "com.google.code.gson:gson:2.10.1"
     }
 
