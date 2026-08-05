@@ -266,6 +266,23 @@ You can test payment using test cards for N-Genius from the following link:
 For detailed documentation, refer to the official N-Genius API documentation.
 
 
+## Contributors
+
+Thanks to the people who have contributed to this package:
+
+<table>
+  <tr>
+    <td align="center">
+      <a href="https://github.com/ziadhassan7">
+        <img src="https://github.com/ziadhassan7.png" width="80px;" alt="Ziad Hassan"/>
+        <br />
+        <sub><b>Ziad Hassan</b></sub>
+      </a>
+    </td>
+  </tr>
+</table>
+
+
 ## License
 
 This project is licensed under the [MIT License](https://github.com/mhammadraza137/ngenius_flutter_sdk/blob/main/LICENSE).
