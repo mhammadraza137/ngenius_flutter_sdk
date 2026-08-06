@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:ngenius_flutter_sdk/ngenius_saved_card_model.dart';
 
 import 'ngenius_checkout_config.dart';
@@ -116,6 +117,11 @@ class NgeniusOrderService {
           'N-Genius response was not a JSON object.',
         );
       }
+
+      debugPrint(
+        '✅ Response:\n${const JsonEncoder.withIndent('  ').convert(decoded)}',
+        wrapWidth: 1024, // prevents truncation
+      );
 
       return decoded;
     } on TimeoutException {

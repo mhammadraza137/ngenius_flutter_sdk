@@ -109,7 +109,7 @@ The default base URL is
 
 ---
 
-#### **Example Implementation (Normal Payment)**
+### **Example Implementation (Normal Payment)**
 ```dart
 class NgeniusExample extends StatelessWidget {
   const NgeniusExample({super.key});
@@ -141,11 +141,28 @@ class NgeniusExample extends StatelessWidget {
   }
 }
 ```
+⚠️ **IMPORTANT**: The minimum supported card expiry date is 12/2030. Any expiry date before 12/2030 will be rejected.
+
 ---
 
-#### **Example Implementation (for using Saved Cards)**
+### **Example Implementation (for using Saved Cards)**
 
 > **Note:** The key difference when using a saved card is in the **order creation step**. You must pass a `savedCard` object (`NGeniusSavedCardModel`) in your `createOrder` request body. If `recaptureCsc` is set to `true`, the user will be prompted to enter their CVV — you can skip this by passing the `cvv` directly to `launchSavedCardPayment`.
+
+
+#### **First: Getting the Saved-Card Token**
+
+1- Ensure that Tokenization is enabled for your merchant account.
+
+2- After a successful payment, retrieve the order details using the following endpoint:
+`GET /transactions/outlets/{{outletId}}/orders/{{orderId}}`
+
+3- The saved card token is returned in the response at:
+`_embedded.payment.savedCard.cardToken`
+
+You can use this token to perform future saved card payments without requiring the customer to re-enter their card details.
+
+#### **Second: Implementation Details**
 
 ```dart
 class NgeniusSavedCardExample extends StatelessWidget {
@@ -163,7 +180,7 @@ class NgeniusSavedCardExample extends StatelessWidget {
               // 1. Build your saved card model from your stored card data
               final savedCard = NGeniusSavedCardModel(
                 maskedPan: "400555******0001",
-                expiry: "2025-12",
+                expiry: "2030-12",
                 cardholderName: "John Doe",
                 scheme: "VISA",
                 cardToken: "your-card-token",
@@ -213,7 +230,7 @@ class NgeniusSavedCardExample extends StatelessWidget {
 | Parameter      | Example                                | DataType   |
 |----------------|----------------------------------------|------------|
 | maskedPan      | `400555******0001`                     | `String`   |
-| expiry         | `"2025-12"`                            | `String`   |
+| expiry         | `"2030-12"`                            | `String`   |
 | cardholderName | `"John Doe"`                           | `String`   |
 | scheme         | `"VISA"`                               | `String`   |
 | cardToken      | `"your-card-token"`                    | `String`   |
@@ -240,19 +257,6 @@ To pass the `orderJsonObject` to the `launchCardPayment` method, you need to pro
 After calling the APIs, you will receive the N-Genius order object. You can check the structure of the order object by referring to the official sample here:  
 [Order Object in Full](https://docs.ngenius-payments.com/reference/the-order-object-in-full)
 
----
-
-### **Getting the Saved-Card Token**
-
-1- Ensure that Tokenization is enabled for your merchant account.
-
-2- After a successful payment, retrieve the order details using the following endpoint:
-`GET /transactions/outlets/{{outletId}}/orders/{{orderId}}`
-
-3- The saved card token is returned in the response at:
-`_embedded.payment.savedCard.cardToken`
-
-You can use this token to perform future saved card payments without requiring the customer to re-enter their card details.
 
 ---
 
@@ -261,7 +265,7 @@ You can use this token to perform future saved card payments without requiring t
 You can test payment using test cards for N-Genius from the following link:  
 [Sandbox Test Environment](https://docs.ngenius-payments.com/reference/sandbox-test-environment)
 
-
+⚠️ **IMPORTANT**: The minimum supported card expiry date is 12/2030. Any expiry date before 12/2030 will be rejected.
 
 For detailed documentation, refer to the official N-Genius API documentation.
 

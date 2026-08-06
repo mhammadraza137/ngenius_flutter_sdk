@@ -41,11 +41,11 @@ class _NgeniusPaymentDashboardState extends State<NgeniusPaymentDashboard>
   );
 
   final _maskedPanController = TextEditingController(text: '400555******0001');
-  final _expiryController = TextEditingController(text: '2028-12');
+  final _expiryController = TextEditingController(text: '2030-12');
   final _cardholderNameController = TextEditingController(text: 'John Doe');
   final _schemeController = TextEditingController(text: 'VISA');
   final _cardTokenController =
-      TextEditingController(text: 'dG9rZW5pemVkUGFuLyy8wMDAwMDAwNDI');
+      TextEditingController(text: 'dG9rZW5pemVkUGFuLy92MS8vU0hPV19OT05FLy8wMTAwMjEwNDIxMTE0MTcz');
   final _cvvController = TextEditingController(text: '123');
 
   bool _recaptureCsc = true;
@@ -336,7 +336,7 @@ class _NgeniusPaymentDashboardState extends State<NgeniusPaymentDashboard>
                         child: _buildTextField(
                           _expiryController,
                           'Expiry Date',
-                          hint: '2028-12',
+                          hint: '2030-12',
                         ),
                       ),
                       const SizedBox(width: 12),

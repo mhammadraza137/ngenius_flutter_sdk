@@ -33,3 +33,6 @@ ngenius_flutter_sdk.git/
 .flutter-plugins
 .flutter-plugins-dependencies
 build/
+
+# FVM Version Cache
+.fvm/
