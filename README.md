@@ -30,15 +30,25 @@ The example no longer applies the `kotlin-android` plugin directly. Its
 this branch should not yet be described as a complete built-in Kotlin
 migration.
 
-### **Project-Level `build.gradle` Changes**
-Since N-Genius SDK is a **JitPack dependency**, add the following line inside the `allprojects` repositories block in your **project-level** `android/build.gradle` file:
+### **Project-Level** `build.gradle` **Changes**
+Since the N-Genius SDK is hosted on **JitPack**, add the JitPack repository to the `allprojects` repositories block in your **project-level**  `android/build.gradle` file.
 
-```gradle
+#### **For newer Flutter projects**
+
+Use: `maven { url = uri("https://jitpack.io") }`
+
+#### **For older Flutter projects**
+
+Use: `maven { url 'https://jitpack.io' }`
+
+#### Your `allprojects` block should look like this:
+
+```
 allprojects {
     repositories {
         google()
         mavenCentral()
-        maven { url 'https://jitpack.io' } // Add this line
+        maven { url = uri("https://jitpack.io") } // Add this line
     }
 }
 ```
