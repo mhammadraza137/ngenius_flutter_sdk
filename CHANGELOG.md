@@ -1,3 +1,7 @@
+## 1.0.5
+- Fixed a crash when running the plugin on older Flutter/Gradle/Kotlin toolchains, caused by the plugin's Android `build.gradle` pinning its own Kotlin/AGP versions that conflicted with the host app's setup.
+- Updated example app's Android configuration to match the compatibility fix.
+
 ## 1.0.4
 - Explicitly declared Android and iOS platform support for pub.dev metadata.
 
