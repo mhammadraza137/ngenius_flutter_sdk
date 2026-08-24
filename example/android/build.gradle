@@ -4,6 +4,9 @@ allprojects {
         maven { url 'https://jitpack.io' }
         mavenCentral()
     }
+    configurations.all {
+        exclude group: 'androidx.test.espresso', module: 'espresso-idling-resource'
+    }
 }
 
 rootProject.buildDir = "../build"
